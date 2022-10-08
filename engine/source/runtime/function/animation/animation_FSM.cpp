@@ -34,6 +34,7 @@ namespace Pilot
     }
     /**
      * 人状态转换状态机 
+     * TODO cross fade
      */
     bool AnimationFSM::update(const json11::Json::object& signals)
     {
@@ -53,7 +54,8 @@ namespace Pilot
                 break;
             case States::_walk_start:
                 /**** [1] ****/
-                if (is_clip_finish) setStates(States::_walk_run);                
+                if (is_clip_finish) setStates(States::_walk_run);      
+                else if(is_jumping) setStates(States::_jump_start_from_walk_run);     
                 break;
             case States::_walk_run:
                 /**** [2] ****/
@@ -71,7 +73,7 @@ namespace Pilot
                 break;
             case States::_jump_loop_from_idle:
                 /**** [5] ****/
-                if (is_clip_finish) setStates(States::_jump_end_from_idle);
+                if (!is_jumping) setStates(States::_jump_end_from_idle);
                 break;
             case States::_jump_end_from_idle:
                 /**** [6] ****/
@@ -83,7 +85,7 @@ namespace Pilot
                 break;
             case States::_jump_loop_from_walk_run:
                 /**** [8] ****/
-                if (is_clip_finish) setStates(States::_jump_end_from_walk_run);
+                if (!is_jumping) setStates(States::_jump_end_from_walk_run);
                 break;
             case States::_jump_end_from_walk_run:
                 /**** [9] ****/
