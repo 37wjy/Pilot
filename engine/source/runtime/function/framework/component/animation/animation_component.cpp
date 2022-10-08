@@ -149,10 +149,12 @@ namespace Pilot
         m_skeleton.applyPose(pose);
         m_animation_result = m_skeleton.outputAnimationResult();
     }
+    
+    //动画与第一个动画插值 最后apply第一个
     void AnimationComponent::blend(float desired_ratio, BlendState* blend_state)
     {
-
-        for (auto& ratio : blend_state->m_blend_ratio)
+        //for 赋值
+        for (auto& ratio : blend_state->m_blend_ratio) //动画帧
         {
             ratio = desired_ratio;
         }
@@ -169,6 +171,7 @@ namespace Pilot
             m_skeleton.extractPose(pose);
             poses.push_back(pose);
         }
+
         for (int i = 1; i < blendStateData.m_clip_count; i++)
         {
             for (auto& pose : poses[i].m_weight.m_blend_weight)

@@ -6,10 +6,10 @@ AnimationPose::AnimationPose() { m_reorder = false; }
 
 AnimationPose::AnimationPose(const AnimationClip& clip, float ratio, const AnimSkelMap& animSkelMap)
 {
-    m_bone_indexs = animSkelMap.convert;
+    m_bone_indexs = animSkelMap.convert;    // 骨骼数据
     m_reorder     = true;
     extractFromClip(m_bone_poses, clip, ratio);
-    m_weight.m_blend_weight.resize(m_bone_poses.size());
+    m_weight.m_blend_weight.resize(m_bone_poses.size());    // 混合权重
     for (auto& weight : m_weight.m_blend_weight)
     {
         weight = 1.f;
@@ -54,6 +54,7 @@ void AnimationPose::extractFromClip(std::vector<Transform>& bones, const Animati
 }
 
 
+//按weight与目标插值
 void AnimationPose::blend(const AnimationPose& pose)
 {
     for (int i = 0; i < m_bone_poses.size(); i++)
@@ -61,14 +62,14 @@ void AnimationPose::blend(const AnimationPose& pose)
         auto&       bone_trans_one = m_bone_poses[i];
         const auto& bone_trans_two = pose.m_bone_poses[i];
 
-        // float sum_weight =
-        // if (sum_weight != 0)
+        float sum_weight = m_weight.m_blend_weight[i] + pose.m_weight.m_blend_weight[i];
+        if (sum_weight != 0)
         {
-            // float cur_weight =
-            // m_weight.m_blend_weight[i] =
-            // bone_trans_one.m_position  =
-            // bone_trans_one.m_scale     =
-            // bone_trans_one.m_rotation  =
+            float cur_weight = m_weight.m_blend_weight[i]/sum_weight;
+            m_weight.m_blend_weight[i] = sum_weight;
+            bone_trans_one.m_position  = Vector3::lerp( bone_trans_two.m_position, bone_trans_one.m_position, cur_weight);
+            bone_trans_one.m_scale     = Vector3::lerp( bone_trans_two.m_scale, bone_trans_one.m_scale, cur_weight);
+            bone_trans_one.m_rotation  = Quaternion::nLerp(cur_weight, bone_trans_two.m_rotation, bone_trans_one.m_rotation, true);            
         }
     }
 }

@@ -1,7 +1,12 @@
 #include "runtime/function/animation/animation_FSM.h"
 #include <iostream>
+#include "runtime/core/base/macro.h"
 namespace Pilot
 {
+
+    /**
+     * 动画状态机
+    */
     AnimationFSM::AnimationFSM() {}
     float tryGetFloat(const json11::Json::object& json, const std::string& key, float default_value)
     {
@@ -21,6 +26,15 @@ namespace Pilot
         }
         return default_value;
     }
+
+    void AnimationFSM::setStates(States state)
+    {
+        LOG_INFO("state change {} -> {}",StatesName[m_state].c_str(), StatesName[state].c_str());
+        m_state = state;
+    }
+    /**
+     * 人状态转换状态机 
+     */
     bool AnimationFSM::update(const json11::Json::object& signals)
     {
         States last_state     = m_state;
@@ -34,35 +48,49 @@ namespace Pilot
         {
             case States::_idle:
                 /**** [0] ****/
+                if (is_jumping) setStates(States::_jump_start_from_idle);
+                else if (is_moving) setStates(States::_walk_start);            
                 break;
             case States::_walk_start:
                 /**** [1] ****/
+                if (is_clip_finish) setStates(States::_walk_run);                
                 break;
             case States::_walk_run:
                 /**** [2] ****/
+                if (is_jumping) setStates(States::_jump_start_from_walk_run);
+                else if (start_walk_end && is_clip_finish) setStates(States::_walk_stop);
+                else if (!is_moving) setStates(States::_idle);
                 break;
             case States::_walk_stop:
                 /**** [3] ****/
+                if (!is_moving && is_clip_finish) setStates(States::_idle);
                 break;
             case States::_jump_start_from_idle:
                 /**** [4] ****/
+                if (is_clip_finish) setStates(States::_jump_loop_from_idle);
                 break;
             case States::_jump_loop_from_idle:
                 /**** [5] ****/
+                if (is_clip_finish) setStates(States::_jump_end_from_idle);
                 break;
             case States::_jump_end_from_idle:
                 /**** [6] ****/
+                if (is_clip_finish) setStates(States::_idle);
                 break;
             case States::_jump_start_from_walk_run:
                 /**** [7] ****/
+                if (is_clip_finish) setStates(States::_jump_loop_from_walk_run);
                 break;
             case States::_jump_loop_from_walk_run:
                 /**** [8] ****/
+                if (is_clip_finish) setStates(States::_jump_end_from_walk_run);
                 break;
             case States::_jump_end_from_walk_run:
                 /**** [9] ****/
+                if (is_clip_finish) setStates(States::_walk_run);
                 break;
             default:
+                setStates(States::_idle);
                 break;
         }
         return last_state != m_state;
