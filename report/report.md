@@ -16,3 +16,6 @@ Component 结构：
 
     postLoadResource
     tick
+
+
+m_editor_ui_creator 下对所有类型值有对应lambda绘制函数
