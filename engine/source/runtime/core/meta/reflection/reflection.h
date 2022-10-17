@@ -22,10 +22,20 @@ namespace Piccolo
 //#define CLASS(class_name,...) class class_name:public Reflection::object
 #endif // __REFLECTION_PARSER__
 
+
+/* 
+ * 加入 friends 关联
+ */
+
 #define REFLECTION_BODY(class_name) \
     friend class Reflection::TypeFieldReflectionOparator::Type##class_name##Operator; \
     friend class PSerializer;
     // public: virtual std::string getTypeName() override {return #class_name;}
+
+/* 
+ * 把 class 封装
+ * ## 为连接词
+ */
 
 #define REFLECTION_TYPE(class_name) \
     namespace Reflection \

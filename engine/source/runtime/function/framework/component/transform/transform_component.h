@@ -8,7 +8,7 @@
 
 namespace Piccolo
 {
-    REFLECTION_TYPE(TransformComponent)
+    REFLECTION_TYPE(TransformComponent)   // 组件为反射类 TypeTransformComponentOperator
     CLASS(TransformComponent : public Component, WhiteListFields)
     {
         REFLECTION_BODY(TransformComponent)
