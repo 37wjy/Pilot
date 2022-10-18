@@ -8,10 +8,23 @@
 
 namespace Piccolo
 {
-    REFLECTION_TYPE(TransformComponent)   // 组件为反射类 TypeTransformComponentOperator
+
+    // 宏展开到
+    namespace Reflection 
+    { 
+        namespace TypeFieldReflectionOparator 
+        { 
+            class TypeTransformComponentOperator; 
+        } 
+    };
+
+    // REFLECTION_TYPE(TransformComponent)   // 组件为反射类 TypeTransformComponentOperator
     CLASS(TransformComponent : public Component, WhiteListFields)
     {
-        REFLECTION_BODY(TransformComponent)
+        // REFLECTION_BODY(TransformComponent)
+        // 宏展开
+        friend class Reflection::TypeFieldReflectionOparator::TypeTransformComponentOperator; 
+        friend class PSerializer;
 
     public:
         TransformComponent() = default;
