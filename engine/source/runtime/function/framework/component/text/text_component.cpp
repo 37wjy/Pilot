@@ -5,10 +5,9 @@
 
 namespace Piccolo
 {
-
-    void TransformComponent::postLoadResource(std::weak_ptr<GObject> parent_gobject)
+    void TextComponent::postLoadResource(std::weak_ptr<GObject> parent_gobject)
     {
-        m_is_dirty            = true;
+        m_is_dirty = true;
     }
 
 
